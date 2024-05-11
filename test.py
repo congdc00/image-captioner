@@ -9,4 +9,9 @@ DATA_PATH = "data"
 
 api = HfApi(endpoint="https://huggingface.co", # Can be a Private Hub endpoint.
     token=TOKEN_HF)
-api.snapshot_download(repo_id="congdc/thumb-youtube", local_dir="data/", repo_type="dataset")
+api.upload_file(
+    path_or_fileobj="data/caption.json",
+    path_in_repo="captions/share_gpt_version1.json",
+    repo_id="congdc/imgs-furniture",
+    repo_type="dataset",
+)

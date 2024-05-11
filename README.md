@@ -8,6 +8,6 @@ conda activate image-captioner
 ```
 
 ```
-pip install -r requirements.txt
+bash install.sh
 ```
 

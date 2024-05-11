@@ -1,40 +1,75 @@
 import gradio as gr 
 
-from core.utils.data import download, upload, analysis
+from core.utils.data import download, upload, analysis_imgs, show_ex
+from core.run_model import run_captioner
+import yaml
 
+CONFIGS_PATH = "config/configs.yaml"
+with open(CONFIGS_PATH, 'r') as f:
+    configs = yaml.safe_load(f)
 
+def reset_config():
+    return gr.update(value=configs["config_model"])
+def enable(mode_caption):
+    if mode_caption == "Custom":
+        return gr.update(visible=True, interactive= True)
+    else:
+        return gr.update(value = "", visible=False)
 
 def init():
-    model = gr.Dropdown(label="Model", value="Lin-Chen/ShareGPT4V-7B", choices=["Lin-Chen/ShareGPT4V-7B", "Lin-Chen/ShareGPT4V-13B", "Lin-Chen/ShareCaptioner"], interactive=True)
-    prompt = gr.Text(label="Prompt", value="Describe the setting, whether indoors or outdoors, the predominant colors of the image, and details about the shapes, colors, and positions of each object in the room, separated by commas. Do not use adjectives, periods, or line breaks.")
     
     with gr.Row():
-        source_imgs = gr.Text(label="Source Data", value="congdc/thumb-youtube", interactive=True, scale=8)
-        download_imgs_btn = gr.Button(value="Download", scale=1)
-        analysis_imgs_btn = gr.Button(value="Analysis", scale=1, visible=False)
-    info_img = gr.Text(label="Info images dataset", visible=False)
+        with gr.Column(scale=8):
+            source_imgs = gr.Text(label="Source Data", value="put name model here", interactive=True)
+            info_img = gr.Text(label="Info images dataset", visible=False)
+        download_imgs_btn = gr.Button(value="Download", variant="primary", scale=1)
+        analysis_imgs_btn = gr.Button(value="Analysis", scale=1)
+        
+    
     
     download_imgs_btn.click(download, inputs=source_imgs, outputs=analysis_imgs_btn)    
-    analysis_imgs_btn.click(analysis, outputs=info_img)
+    analysis_imgs_btn.click(analysis_imgs, outputs=info_img)
     
+    
+    model = gr.Dropdown(label="Model", value=configs["models"][0], choices=configs["models"], interactive=True)
+    prompt = gr.Text(label="Prompt", value=configs["template_prompt"], interactive=True)
+    
+    
+
     with gr.Accordion("Advance", open=False):
-        gr.Text(label="num_beams", value="--num_beams 1, ")
+        with gr.Row():
+            config = gr.Text(label="Configs", value=configs["config_model"], interactive=True, scale=5)
+            reset_btn = gr.Button(value="Reset")
+        
+    reset_btn.click(reset_config, outputs=config)
         
         
     # Caption
-    submit_btn = gr.Button(value="Caption all images", variant="primary", size="lg")
+    mode_caption = gr.Dropdown(choices=["All", "Custom"], label="Num image caption", value = "All", interactive=True)
+    list_img_caption = gr.Text(value="", visible=False, label="List images")
+    mode_caption.change(enable,inputs = mode_caption, outputs = list_img_caption)
     
-    with gr.Tab(label="View sample"):
+    submit_btn = gr.Button(value="Generate caption", variant="primary", size="lg")
+    info_captioner = gr.TextArea(label= "Info captioner", visible=False)
+    submit_btn.click(run_captioner, inputs = [model, prompt, config, list_img_caption], outputs=info_captioner)
+    
+    # View sample
+    with gr.Tab(label="Samples"):
         with gr.Row():
-            analysis_caption_btn = gr.Button(value="Analysis captions")
+            name_img = gr.Text(label="Name img")
             sample_btn = gr.Button(value="Show sample")
+        with gr.Row():
+            img_result = gr.Image(label="Image sample", scale=4)
+            caption_result = gr.TextArea(label="Caption", scale=1)
+    sample_btn.click(show_ex, inputs=name_img, outputs=[img_result, caption_result])
+          
         
     with gr.Tab(label="Push"):
         with gr.Row():
-            name_version = gr.Text(label="Name version caption", interactive=True, scale=2)
+            name_version = gr.Text(label="Name version caption",value="captions_v" ,interactive=True, scale=2)
             up_caption_btn = gr.Button(value="Upload caption", variant="primary")
             
-    up_caption_btn.click(upload, name_version, source_imgs)
+    up_caption_btn.click(upload, inputs=[name_version, source_imgs])
         
     
 

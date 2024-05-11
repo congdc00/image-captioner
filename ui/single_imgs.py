@@ -1,18 +1,23 @@
 import gradio as gr 
+import yaml
+from core.run_model import run_captioner_sample
+CONFIGS_PATH = "config/configs.yaml"
+with open(CONFIGS_PATH, 'r') as f:
+    configs = yaml.safe_load(f)
 
 
 def init():
-    model = gr.Dropdown(label="Model", value="Lin-Chen/ShareGPT4V-7B", choices=["Lin-Chen/ShareGPT4V-7B", "Lin-Chen/ShareGPT4V-13B", "Lin-Chen/ShareCaptioner"], interactive=True)
-    prompt = gr.Text(label="Prompt", value="Describe the setting, whether indoors or outdoors, the predominant colors of the image, and details about the shapes, colors, and positions of each object in the room, separated by commas. Do not use adjectives, periods, or line breaks.")
+    model = gr.Dropdown(label="Model", value=configs["models"][0], choices=configs["models"], interactive=True)
+    prompt = gr.Text(label="Prompt", value=configs["template_prompt"], interactive=True)
     
     with gr.Row():
         list_img = []
         for i in range(5):
-            image = gr.Image()
+            image = gr.Image(type = "filepath")
             list_img.append(image)
     
     with gr.Accordion("Advance", open=False):
-        gr.Text(label="num_beams", value="--num_beams 1, ")
+        config = gr.Text(label="num_beams", value=configs["config_model"] )
     submit_btn = gr.Button(value="Generate caption", variant="primary", size="lg")
     
     with gr.Row():
@@ -20,4 +25,6 @@ def init():
         for i in range(5):
             result = gr.TextArea(label="Caption")
             results.append(result)
+            
+    submit_btn.click(run_captioner_sample, inputs=[model, prompt, config] + list_img, outputs=results)
         
