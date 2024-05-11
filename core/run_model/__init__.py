@@ -13,6 +13,7 @@ def get_config(configs):
     list_config = configs.split(",")
     results = {}
     for config in list_config:
+        config = config.replace(" --", "--")
         key, value = config.split(" ")
         key = key.replace("--", "")
         if value.isdigit():

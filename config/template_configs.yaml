@@ -1,6 +1,4 @@
 models: 
-  - "Lin-Chen/ShareGPT4V-7B"
-  - "Lin-Chen/ShareGPT4V-13B"
-  - "Lin-Chen/ShareCaptioner"
-config_model: "--num_beams 1"
+  - "name_model"
+config_model: "--sample_config xxx"
 template_prompt: "Describe the setting, whether indoors or outdoors, the predominant colors of the image, and details about the shapes, colors, and positions of each object in the room, separated by commas. Do not use adjectives, periods, or line breaks."
