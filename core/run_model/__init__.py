@@ -45,14 +45,13 @@ def generative_caption(img_path, configs):
     
     return ""
 
-def run_captioner(model, prompt, configs, list_img, progress=gr.Progress()):
+def run_captioner(model, prompt, configs, read_json_path, list_img, progress=gr.Progress()):
     
     configs = get_config(configs)
-    configs["model"] = model
+    configs["model_path"] = model
     configs["prompt"] = prompt
-    json_path  = "data/captions.json"
     progress(0, desc="Starting...")
-    
+    json_path = "data/captions.json"
     if list_img == "":
         if os.path.exists(json_path):
             os.remove(json_path)
@@ -66,7 +65,7 @@ def run_captioner(model, prompt, configs, list_img, progress=gr.Progress()):
             results["imgs"].append(result)
     else:
         list_img = get_list_img(list_img)
-        with open(json_path, 'r') as f:
+        with open(read_json_path, 'r') as f:
             results = json.load(f)
         
         for i, result in enumerate(results["imgs"]):
@@ -83,7 +82,7 @@ def run_captioner(model, prompt, configs, list_img, progress=gr.Progress()):
 
 def run_captioner_sample(model, prompt, configs, img1, img2, img3, img4, img5, progress=gr.Progress()):
     configs = get_config(configs)
-    configs["model"] = model
+    configs["model_path"] = model
     configs["prompt"] = prompt
     
     progress(0, desc="Starting...")

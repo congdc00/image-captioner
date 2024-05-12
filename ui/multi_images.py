@@ -12,9 +12,9 @@ def reset_config():
     return gr.update(value=configs["config_model"])
 def enable(mode_caption):
     if mode_caption == "Custom":
-        return gr.update(visible=True, interactive= True)
+        return gr.update(visible=True, interactive= True), gr.update(visible=True, interactive= True)
     else:
-        return gr.update(value = "", visible=False)
+        return gr.update(value = "", visible=False), gr.update(value = "data/captions/caption.json", visible=False)
 
 def init():
     
@@ -46,12 +46,13 @@ def init():
         
     # Caption
     mode_caption = gr.Dropdown(choices=["All", "Custom"], label="Num image caption", value = "All", interactive=True)
+    default_caption_path = gr.Text(value="data/captions/caption.json", visible=False, label="Read from caption")
     list_img_caption = gr.Text(value="", visible=False, label="List images")
-    mode_caption.change(enable,inputs = mode_caption, outputs = list_img_caption)
+    mode_caption.change(enable,inputs = mode_caption, outputs = [list_img_caption, default_caption_path])
     
     submit_btn = gr.Button(value="Generate caption", variant="primary", size="lg")
     info_captioner = gr.TextArea(label= "Info captioner", visible=False)
-    submit_btn.click(run_captioner, inputs = [model, prompt, config, list_img_caption], outputs=info_captioner)
+    submit_btn.click(run_captioner, inputs = [model, prompt, config,default_caption_path, list_img_caption], outputs=info_captioner)
     
     # View sample
     with gr.Tab(label="Samples"):
