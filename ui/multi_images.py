@@ -14,7 +14,7 @@ def enable(mode_caption):
     if mode_caption == "Custom":
         return gr.update(visible=True, interactive= True), gr.update(visible=True, interactive= True)
     else:
-        return gr.update(value = "", visible=False), gr.update(value = "data/captions/caption.json", visible=False)
+        return gr.update(value = "", visible=False), gr.update(value = "captions/caption.json", visible=False)
 
 def init():
     
