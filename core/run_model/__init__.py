@@ -6,7 +6,7 @@ import os
 import shutil
 import json
 
-IMGS_PATH = "image-captioner/data/imgs"
+IMGS_PATH = "data/imgs"
 
 def get_config(configs):
     
@@ -39,7 +39,7 @@ def get_list_img(list_img):
     list_img = list_img.split("\n")
     new_list_img = []
     for img_path in list_img:
-        new_img_path = "image-captioner/data/" + img_path
+        new_img_path = "data/" + img_path
         new_list_img.append(new_img_path)
     list_img = new_list_img
     return list_img
@@ -65,9 +65,11 @@ def run_captioner(model, prompt, configs, read_json_path, list_img, progress=gr.
     progress(0, desc="Starting...")
     
     # Remove old captions
-    json_path = "image-captioner/data/captions.json"
-    if os.path.exists(json_path):
-        os.remove(json_path)
+    read_json_path = "data/" + read_json_path
+    json_path = "data/captions.json"
+    if read_json_path != json_path:
+        if os.path.exists(json_path):
+            os.remove(json_path)
     
     # New json path
     if list_img == "":
@@ -82,9 +84,8 @@ def run_captioner(model, prompt, configs, read_json_path, list_img, progress=gr.
     
     # Overite json path
     else:
-        read_json_path = "image-captioner/data/" + read_json_path
+        
         if os.path.exists(read_json_path):
-            
             with open(read_json_path, 'r') as f:
                 results = json.load(f)
             
@@ -117,7 +118,7 @@ def run_captioner(model, prompt, configs, read_json_path, list_img, progress=gr.
         
         
         
-    with open(json_path, 'w+') as f:
+    with open(json_path, 'w') as f:
         json.dump(results, f)
     
     gr.Info("Caption done")

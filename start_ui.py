@@ -8,4 +8,4 @@ with gr.Blocks() as demo:
     ui.init()
     
 if __name__ == "__main__":
-    demo.launch(share=True, server_port = 7860)
+    demo.launch(share=True, server_port = 5555)
