@@ -117,7 +117,7 @@ def run_captioner(model, prompt, configs, read_json_path, list_img, progress=gr.
         
         
         
-    with open(json_path, 'w') as f:
+    with open(json_path, 'w+') as f:
         json.dump(results, f)
     
     gr.Info("Caption done")
