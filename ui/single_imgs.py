@@ -20,11 +20,17 @@ def init():
         config = gr.Text(label="num_beams", value=configs["config_model"] )
     submit_btn = gr.Button(value="Generate caption", variant="primary", size="lg")
     
+    results = []
     with gr.Row():
-        results = []
         for i in range(5):
             result = gr.TextArea(label="Caption")
             results.append(result)
             
+    list_num_token = []
+    with gr.Row():
+        for i in range(5):
+            num_token = gr.TextArea(label = "Num token", lines = 1, show_label=True)
+            list_num_token.append(num_token)
+    results += list_num_token
     submit_btn.click(run_captioner_sample, inputs=[model, prompt, config] + list_img, outputs=results)
         

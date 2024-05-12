@@ -20,8 +20,8 @@ def init():
     
     with gr.Row():
         with gr.Column(scale=8):
-            source_imgs = gr.Text(label="Source Data", value="put name model here", interactive=True)
-            info_img = gr.Text(label="Info images dataset", visible=False)
+            source_imgs = gr.Text(label="Source Data", placeholder="put name model here", interactive=True)
+            info_img = gr.Text(label="Info images dataset", visible=False, container=False)
         download_imgs_btn = gr.Button(value="Download", variant="primary", scale=1)
         analysis_imgs_btn = gr.Button(value="Analysis", scale=1)
         

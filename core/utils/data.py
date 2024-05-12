@@ -9,6 +9,9 @@ import json
 TOKEN_HF = os.environ["TOKEN_HF"]
 DATA_PATH = "data"
 
+def count_token(caption):
+    return len(caption.split())
+
 def download (source_img):
     if os.path.exists("data/"):
         shutil.rmtree("data/")
@@ -44,7 +47,7 @@ def count_imgs(path):
 
 def analysis_imgs():
     num_imgs = count_imgs(f"{DATA_PATH}/imgs")
-    info = f"Num imgs: {num_imgs}"
+    info = f"Num image: {num_imgs}"
     return gr.update(value = info, visible=True)
 
 def show_ex(name_img):
@@ -82,7 +85,7 @@ def analysis_captions(results):
         img_paths.append(img['img_path'])
         captions.append(img['caption'])
         
-        len_token = len(img['caption'])
+        len_token = count_token(img['caption'])
         
         if min_len_token > len_token:
             min_len_token = len_token

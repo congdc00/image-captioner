@@ -1,4 +1,4 @@
-from core.utils.data import analysis_captions
+from core.utils.data import analysis_captions, count_token
 import time
 from glob import glob
 import gradio as gr
@@ -41,8 +41,7 @@ def get_list_img(list_img):
 
 def generative_caption(img_path, configs):
     
-    # PUSH CODE HERE
-    
+    # PUT CODE HERE
     
     return ""
 
@@ -80,20 +79,25 @@ def run_captioner(model, prompt, configs, list_img, progress=gr.Progress()):
     
     return analysis_captions(results)
 
+
+
 def run_captioner_sample(model, prompt, configs, img1, img2, img3, img4, img5, progress=gr.Progress()):
     configs = get_config(configs)
     configs["model"] = model
     configs["prompt"] = prompt
     
     progress(0, desc="Starting...")
-    
+
     results = []
+    list_num_token = []
     list_img_path  = [img1, img2, img3, img4, img5]
     for img_path in list_img_path:
         if img_path != None:
-            config = generative_caption(img_path, configs)
-            results.append(gr.update(value = config))
+            caption = generative_caption(img_path, configs)
+            list_num_token.append(count_token(caption))
+            results.append(gr.update(value = caption))
         else:
+            list_num_token.append(0)
             results.append(None)
-    
+    results += list_num_token
     return tuple(results)
