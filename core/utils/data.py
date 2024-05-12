@@ -15,10 +15,15 @@ def count_token(caption):
 def download (source_img):
     if os.path.exists("data/"):
         shutil.rmtree("data/")
+    
         
     api = HfApi(endpoint="https://huggingface.co", # Can be a Private Hub endpoint.
         token=TOKEN_HF)
-    api.snapshot_download(repo_id=source_img, local_dir="data/", repo_type="dataset")
+
+    try:
+        api.snapshot_download(repo_id=source_img, local_dir="data/", repo_type="dataset")
+    except:
+        gr.Warning(f"Not exit {source_img}")
     
     return gr.update(visible=True)
 
@@ -33,6 +38,7 @@ def upload(name_version, name_repo):
         repo_type="dataset",
     
     )
+    gr.Info(f"Upload to captions/{name_version}.json done")
     
 
 def count_imgs(path):
@@ -96,8 +102,9 @@ def analysis_captions(results):
             name_img_max_len_caption = img_paths[-1]
             
         avg_len_token += len_token
-        
-    avg_len_token /= len(results['imgs'])
+    
+    if len(results['imgs']) > 0:
+        avg_len_token /= len(results['imgs'])
     result = f"Num captions: {len(captions)}\nAvg token:  {avg_len_token}\nMin token:  {min_len_token} ({name_img_min_len_caption})\nMax token:  {max_len_token} ({name_img_max_len_caption})"
     return gr.update(value = result, visible=True)
 

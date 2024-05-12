@@ -46,8 +46,8 @@ def init():
         
     # Caption
     mode_caption = gr.Dropdown(choices=["All", "Custom"], label="Num image caption", value = "All", interactive=True)
-    default_caption_path = gr.Text(value="data/captions/caption.json", visible=False, label="Read from caption")
-    list_img_caption = gr.Text(value="", visible=False, label="List images")
+    default_caption_path = gr.Text(value="captions/caption.json", visible=False, label="Read from caption")
+    list_img_caption = gr.Text(value="", placeholder = "imgs/<type_img>/<name_img>", visible=False, label="List images")
     mode_caption.change(enable,inputs = mode_caption, outputs = [list_img_caption, default_caption_path])
     
     submit_btn = gr.Button(value="Generate caption", variant="primary", size="lg")

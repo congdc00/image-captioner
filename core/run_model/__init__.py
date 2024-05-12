@@ -37,13 +37,25 @@ def get_imgs(path):
 
 def get_list_img(list_img):
     list_img = list_img.split("\n")
+    new_list_img = []
+    for img_path in list_img:
+        new_img_path = "data/" + img_path
+        new_list_img.append(new_img_path)
+    list_img = new_list_img
     return list_img
 
 def generative_caption(img_path, configs):
     
-    # PUT CODE HERE
+    try:
     
-    return ""
+        # PUT CODE HERE
+        result = ""
+        
+    except:
+        result = ""
+        gr.Warning("Out of memory")
+
+    return result
 
 def run_captioner(model, prompt, configs, read_json_path, list_img, progress=gr.Progress()):
     
@@ -51,10 +63,14 @@ def run_captioner(model, prompt, configs, read_json_path, list_img, progress=gr.
     configs["model_path"] = model
     configs["prompt"] = prompt
     progress(0, desc="Starting...")
+    
+    # Remove old captions
     json_path = "data/captions.json"
+    if os.path.exists(json_path):
+        os.remove(json_path)
+    
+    # New json path
     if list_img == "":
-        if os.path.exists(json_path):
-            os.remove(json_path)
         list_img = get_imgs(IMGS_PATH)
         results = {"imgs": []}
         
@@ -63,18 +79,48 @@ def run_captioner(model, prompt, configs, read_json_path, list_img, progress=gr.
             result["caption"] = generative_caption(img_path, configs)
             result["img_path"] = img_path
             results["imgs"].append(result)
+    
+    # Overite json path
     else:
-        list_img = get_list_img(list_img)
-        with open(read_json_path, 'r') as f:
-            results = json.load(f)
+        read_json_path = "data/" + read_json_path
+        if os.path.exists(read_json_path):
+            
+            with open(read_json_path, 'r') as f:
+                results = json.load(f)
+            
+            if "imgs" in results and isinstance(results["imgs"], list):
+                list_img = get_list_img(list_img)
+                
+                # Revert caption
+                for i, result in enumerate(results["imgs"]):
+                    if result["img_path"] in list_img:
+                        results["imgs"][i]["caption"] = generative_caption(result["img_path"], configs)
+                        index = list_img.index(result["img_path"])  # Tìm vị trí đầu tiên của giá trị
+                        list_img.pop(index)
+                
+                for img_path in progress.tqdm(list_img):
+                    if os.path.exists(img_path):
+                        result = {}
+                        result["caption"] = generative_caption(img_path, configs)
+                        result["img_path"] = img_path
+                        results["imgs"].append(result)
+                    else:
+                        gr.Warning(f'Not exist {img_path}')
+            else:
+                gr.Warning(f'Content {read_json_path} is not valid')
+                
+        else:
+            
+            # solution 3
+            results = {"imgs": []}
+            gr.Warning(f'Not exist {read_json_path}')
         
-        for i, result in enumerate(results["imgs"]):
-            if result["img_path"] in list_img:
-                results["imgs"][i]["caption"] = generative_caption(result["img_path"], configs)
+        
         
     with open(json_path, 'w') as f:
         json.dump(results, f)
-        
+    
+    gr.Info("Caption done")
     
     return analysis_captions(results)
 
