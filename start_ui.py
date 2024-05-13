@@ -3,8 +3,8 @@ import gradio as gr
 import ui
 
 
-with gr.Blocks() as demo:
-    gr.Markdown("<center><h1> AI Captioner </h1></center>")
+with gr.Blocks(gr.themes.Soft()) as demo:
+    gr.HTML("<center><h1> AI Captioner </h1></center>")
     ui.init()
     
 if __name__ == "__main__":

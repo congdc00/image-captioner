@@ -18,24 +18,21 @@ def enable(mode_caption):
 
 def init():
     
+    # Step 1:
+    gr.HTML("<h2> Step 1: Download data</h2>")
     with gr.Row():
         with gr.Column(scale=8):
             source_imgs = gr.Text(label="Source Data", placeholder="put name model here", interactive=True)
             info_img = gr.Text(label="Info images dataset", visible=False, container=False)
         download_imgs_btn = gr.Button(value="Download", variant="primary", scale=1)
         analysis_imgs_btn = gr.Button(value="Analysis", scale=1)
-        
-    
-    
-    download_imgs_btn.click(download, inputs=source_imgs, outputs=analysis_imgs_btn)    
+    download_imgs_btn.click(download, inputs=source_imgs, outputs=analysis_imgs_btn, show_progress=True)    
     analysis_imgs_btn.click(analysis_imgs, outputs=info_img)
     
     
+    gr.HTML("<h2> Step 2: Run captioner </h2>")
     model = gr.Dropdown(label="Model", value=configs["models"][0], choices=configs["models"], interactive=True)
     prompt = gr.Text(label="Prompt", value=configs["template_prompt"], interactive=True)
-    
-    
-
     with gr.Accordion("Advance", open=False):
         with gr.Row():
             config = gr.Text(label="Configs", value=configs["config_model"], interactive=True, scale=5)
@@ -43,7 +40,7 @@ def init():
         
     reset_btn.click(reset_config, outputs=config)
         
-        
+    
     # Caption
     mode_caption = gr.Dropdown(choices=["All", "Custom"], label="Num image caption", value = "All", interactive=True)
     default_caption_path = gr.Text(value="captions/caption.json", visible=False, label="Read from caption")
@@ -54,6 +51,7 @@ def init():
     info_captioner = gr.TextArea(label= "Info captioner", visible=False)
     submit_btn.click(run_captioner, inputs = [model, prompt, config,default_caption_path, list_img_caption], outputs=info_captioner)
     
+    gr.HTML("<h2> Step 3: Check & Push </h2>")
     # View sample
     with gr.Tab(label="Samples"):
         with gr.Row():

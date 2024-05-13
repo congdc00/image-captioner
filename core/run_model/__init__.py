@@ -1,9 +1,7 @@
 from core.utils.data import analysis_captions, count_token
-import time
 from glob import glob
 import gradio as gr
 import os
-import shutil
 import json
 
 IMGS_PATH = "data/imgs"
@@ -47,7 +45,6 @@ def get_list_img(list_img):
 def generative_caption(img_path, configs):
     
     try:
-    
         # PUT CODE HERE
         result = ""
         
@@ -57,12 +54,12 @@ def generative_caption(img_path, configs):
 
     return result
 
-def run_captioner(model, prompt, configs, read_json_path, list_img, progress=gr.Progress()):
+def run_captioner(model, prompt, configs, read_json_path, list_img, progress=gr.Progress(track_tqdm = True)):
     
     configs = get_config(configs)
     configs["model_path"] = model
     configs["prompt"] = prompt
-    progress(0, desc="Starting...")
+    progress(0, desc="Starting...", unit="images")
     
     # Remove old captions
     read_json_path = "data/" + read_json_path
@@ -127,17 +124,17 @@ def run_captioner(model, prompt, configs, read_json_path, list_img, progress=gr.
 
 
 
-def run_captioner_sample(model, prompt, configs, img1, img2, img3, img4, img5, progress=gr.Progress()):
+def run_captioner_sample(model, prompt, configs, img1, img2, img3, img4, img5, progress=gr.Progress(track_tqdm = True)):
     configs = get_config(configs)
     configs["model_path"] = model
     configs["prompt"] = prompt
     
-    progress(0, desc="Starting...")
+    progress(0, desc="Starting...", unit="images")
 
     results = []
     list_num_token = []
     list_img_path  = [img1, img2, img3, img4, img5]
-    for img_path in list_img_path:
+    for img_path in progress.tqdm(list_img_path):
         if img_path != None:
             caption = generative_caption(img_path, configs)
             list_num_token.append(count_token(caption))
