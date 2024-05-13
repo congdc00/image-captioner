@@ -57,9 +57,18 @@ def analysis_imgs():
     return gr.update(value = info, visible=True)
 
 def show_ex(name_img):
+    
+    # READ Caption info
     json_path = "data/captions.json"
-    with open(json_path, 'r') as f:
-        data = json.load(f)
+    if os.path.exists(json_path):
+        with open(json_path, 'r') as f:
+            data = json.load(f)
+    else:
+        gr.Warning(f"Not exist {json_path}")
+        return None, None
+        
+    
+    # READ Image
     img_path = ""
     caption = ""
     for img in data['imgs']:
@@ -67,12 +76,11 @@ def show_ex(name_img):
             caption = img['caption']
             img_path = img['img_path']
             break
-
-    if img_path != "":
-    
-        return (gr.update(value= img_path), gr.update(value = caption))
-    else:
+    if img_path == "":
+        gr.Warning(f"Not exist image {name_img}")
         return None, None
+    
+    return (gr.update(value= img_path), gr.update(value = caption))
 
 def analysis_captions(results):
 
