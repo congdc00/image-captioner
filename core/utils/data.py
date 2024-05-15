@@ -121,6 +121,6 @@ def analysis_captions(results, delta_time):
     
     if len(results['imgs']) > 0:
         avg_len_token /= len(results['imgs'])
-    result = f"Num captions: {len(captions)}\nAvg token:  {avg_len_token}\nMin token:  {min_len_token} ({name_img_min_len_caption})\nMax token:  {max_len_token} ({name_img_max_len_caption})\n Time process: {delta_time}"
+    result = f"Num captions: {len(captions)}\nAvg token:  {avg_len_token}\nMin token:  {min_len_token} ({name_img_min_len_caption})\nMax token:  {max_len_token} ({name_img_max_len_caption})\nTime process: {delta_time}"
     return gr.update(value = result, visible=True)
 
