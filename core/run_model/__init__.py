@@ -3,6 +3,8 @@ from glob import glob
 import gradio as gr
 import os
 import json
+from tqdm import tqdm
+import time
 
 IMGS_PATH = "data/imgs"
 
@@ -57,12 +59,15 @@ def generative_caption(img_path, configs):
 
     return result
 
-def run_captioner(model, prompt, configs, read_json_path, list_img, progress=gr.Progress(track_tqdm = True)):
+def run_captioner(model, prompt, configs, read_json_path, list_img): #progress=gr.Progress(track_tqdm = True)):
+   
+    start_time = time.time()
     
     configs = get_config(configs)
     configs["model_path"] = model
     configs["prompt"] = prompt
-    progress(0, desc="Starting...", unit="images")
+    
+    # progress(0, desc="Starting...", unit="images")
     
     # Remove old captions
     read_json_path = "data/" + read_json_path
@@ -76,7 +81,7 @@ def run_captioner(model, prompt, configs, read_json_path, list_img, progress=gr.
         list_img = get_imgs(IMGS_PATH)
         results = {"imgs": []}
         
-        for img_path in progress.tqdm(list_img):
+        for img_path in tqdm(list_img):
             result = {}
             result["caption"] = generative_caption(img_path, configs)
             result["img_path"] = img_path
@@ -99,7 +104,7 @@ def run_captioner(model, prompt, configs, read_json_path, list_img, progress=gr.
                         index = list_img.index(result["img_path"])  # Tìm vị trí đầu tiên của giá trị
                         list_img.pop(index)
                 
-                for img_path in progress.tqdm(list_img):
+                for img_path in tqdm(list_img):
                     if os.path.exists(img_path):
                         result = {}
                         result["caption"] = generative_caption(img_path, configs)
@@ -123,7 +128,9 @@ def run_captioner(model, prompt, configs, read_json_path, list_img, progress=gr.
     
     gr.Info("Caption done")
     
-    return analysis_captions(results)
+    end_time = time.time()
+    delta_time = end_time - start_time
+    return analysis_captions(results, delta_time)
 
 
 

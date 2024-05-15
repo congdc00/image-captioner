@@ -67,6 +67,7 @@ def show_ex(name_img):
     
     # READ Caption info
     json_path = "data/captions.json"
+    name_img = os.path.join("data", name_img)
     if os.path.exists(json_path):
         with open(json_path, 'r') as f:
             data = json.load(f)
@@ -89,7 +90,7 @@ def show_ex(name_img):
     
     return (gr.update(value= img_path), gr.update(value = caption))
 
-def analysis_captions(results):
+def analysis_captions(results, delta_time):
 
     # Khởi tạo hai danh sách rỗng để chứa img_path và caption
     img_paths = []
@@ -120,6 +121,6 @@ def analysis_captions(results):
     
     if len(results['imgs']) > 0:
         avg_len_token /= len(results['imgs'])
-    result = f"Num captions: {len(captions)}\nAvg token:  {avg_len_token}\nMin token:  {min_len_token} ({name_img_min_len_caption})\nMax token:  {max_len_token} ({name_img_max_len_caption})"
+    result = f"Num captions: {len(captions)}\nAvg token:  {avg_len_token}\nMin token:  {min_len_token} ({name_img_min_len_caption})\nMax token:  {max_len_token} ({name_img_max_len_caption})\n Time process: {delta_time}"
     return gr.update(value = result, visible=True)
 
