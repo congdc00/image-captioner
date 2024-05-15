@@ -48,7 +48,7 @@ def init():
     mode_caption.change(enable,inputs = mode_caption, outputs = [list_img_caption, default_caption_path])
     
     submit_btn = gr.Button(value="Generate caption", variant="primary", size="lg")
-    info_captioner = gr.TextArea(label= "Info captioner", visible=False)
+    info_captioner = gr.TextArea(label= "Info captioner")
     submit_btn.click(run_captioner, inputs = [model, prompt, config,default_caption_path, list_img_caption], outputs=info_captioner)
     
     gr.HTML("<h2> Step 3: Check & Push </h2>")
