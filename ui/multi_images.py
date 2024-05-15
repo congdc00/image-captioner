@@ -14,7 +14,7 @@ def enable(mode_caption):
     if mode_caption == "Custom":
         return gr.update(visible=True, interactive= True), gr.update(visible=True, interactive= True)
     else:
-        return gr.update(value = "", visible=False), gr.update(value = "captions/caption.json", visible=False)
+        return gr.update(value = "", visible=False), gr.update(value = "captions.json", visible=False)
 
 def init():
     
@@ -43,7 +43,7 @@ def init():
     
     # Caption
     mode_caption = gr.Dropdown(choices=["All", "Custom"], label="Num image caption", value = "All", interactive=True)
-    default_caption_path = gr.Text(value="captions/caption.json", visible=False, label="Read from caption")
+    default_caption_path = gr.Text(value="captions.json", visible=False, label="Read from caption")
     list_img_caption = gr.Text(value="", placeholder = "imgs/<type_img>/<name_img>", visible=False, label="List images")
     mode_caption.change(enable,inputs = mode_caption, outputs = [list_img_caption, default_caption_path])
     
