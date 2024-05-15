@@ -110,11 +110,11 @@ def analysis_captions(results):
         
         if min_len_token > len_token:
             min_len_token = len_token
-            name_img_min_len_caption = img_paths[-1]
+            name_img_min_len_caption = img_paths[-1].replace("data/", "")
         
         if max_len_token < len_token:
             max_len_token = len_token
-            name_img_max_len_caption = img_paths[-1]
+            name_img_max_len_caption = img_paths[-1].replace("data/", "")
             
         avg_len_token += len_token
     
