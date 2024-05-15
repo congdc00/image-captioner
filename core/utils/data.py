@@ -5,23 +5,30 @@ from huggingface_hub import HfApi
 from glob import glob
 import shutil
 import json
-
+import multiprocessing
+from tqdm import tqdm
 TOKEN_HF = os.environ["TOKEN_HF"]
 DATA_PATH = "data"
+
+old_repo = ""
 
 def count_token(caption):
     return len(caption.split())
 
 def download (source_img):
-    if os.path.exists("data/"):
+    
+    global old_repo
+    
+    if source_img != old_repo and os.path.exists("data/"):
         shutil.rmtree("data/")
+        old_repo = source_img
+    os.makedirs("data/", exist_ok=True)
     
         
     api = HfApi(endpoint="https://huggingface.co", # Can be a Private Hub endpoint.
         token=TOKEN_HF)
-
     try:
-        api.snapshot_download(repo_id=source_img, local_dir="data/", repo_type="dataset")
+        api.snapshot_download(repo_id=source_img, local_dir="data/", repo_type="dataset", force_download=True, max_workers= multiprocessing.cpu_count())
     except:
         gr.Warning(f"Not exit {source_img}")
     

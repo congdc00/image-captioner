@@ -44,13 +44,9 @@ def get_list_img(list_img):
 
 def generative_caption(img_path, configs):
     
-    try:
-        # PUT CODE HERE
-        result = ""
+    # PUT CODE HERE
+    result = ""
         
-    except:
-        result = ""
-        gr.Warning("Out of memory")
 
     return result
 
